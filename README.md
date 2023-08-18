@@ -11,7 +11,7 @@ This library allows you to receive messages through a network into a console win
 - Server: Receives messages and prints to console.
 - Library: Sends the messages from the device to your PC.
 
-## 1. Install Instructions
+## 1. Install Library
 
 1. Go to your project folder.
 2. Open or create and open the 'lib' folder.
