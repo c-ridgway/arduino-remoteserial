@@ -8,7 +8,7 @@ This library allows you to receive messages through a network into a console win
 
 ## Basics
 
-Arduino library sends HTTP message -> receiving server on your PC -> prints to console
+Arduino library sends HTTP message -> server on your PC -> print to console
 
 ## 1. Install Instructions
 
