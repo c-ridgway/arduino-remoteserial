@@ -7,17 +7,64 @@
 #define REMOTE_SERIAL_H
 
 #include <Arduino.h>
+#include <WiFi.h>
 #include <HTTPClient.h>
 #include <vector>
 
 class RemoteSerialClass {
 private:
+  struct QueueItem {
+    String toJsonKeyValue(String key, String value, bool isEnd = false, bool flagSanitize = false) {
+      return "\"" + key + "\": \"" + (flagSanitize? toJsonSanitizedValue(value): value) + "\"" + (isEnd? "": ", ");
+    }
+
+    String toJsonSanitizedValue(const String& input) {
+      String output;
+      output.reserve(input.length());
+
+      for (int i = 0; i < input.length(); i++) {
+      switch (input[i]) {
+        case '\\': output += "\\\\"; break;
+        case '\"': output += "\\\""; break;
+        case '\b': output += "\\b";  break;
+        case '\f': output += "\\f";  break;
+        case '\n': output += "\\n";  break;
+        case '\r': output += "\\r";  break;
+        case '\t': output += "\\t";  break;
+        default:
+          if ('\x00' <= input[i] && input[i] <= '\x1f') {
+            char buf[7];
+            sprintf(buf, "\\u%04x", input[i]);
+            output += buf;
+          } else {
+            output += input[i];
+          }
+        }
+      }
+
+      return output;
+    }
+
+  public:
+    String payload;
+    String handler;
+
+    QueueItem(String payload, String handler): handler(handler), payload(payload) {
+
+    }
+
+    String toJson() {
+      //"{\"payload\": \"" + toJsonSanitizedValue(inputString) + "\", \"handler\": \"" + handler + "\"}";
+      return "{" + toJsonKeyValue("payload", payload, false, true) + toJsonKeyValue("handler", handler, true) + "}";
+    }
+  };
+
   String url;
   time_t lastFlushed;
   time_t flushInterval;
   time_t failFlushInterval;
   HTTPClient http;
-  std::vector<String> queue;
+  std::vector<QueueItem> queue;
   bool lastFailed;
 
 public:
@@ -34,25 +81,26 @@ public:
     this->flushInterval = flushInterval;
     this->failFlushInterval = failFlushInterval;
 
-    println("[clear]");
+    clear();
   }
 
   void tick() {
     if (clock() - lastFlushed > lastFailed? failFlushInterval: flushInterval) {
       lastFlushed = clock();
 
-      flush();
+      if (WiFi.status() == WL_CONNECTED) {
+        flush();
+      }
     }
   }
 
-  bool send(String payload) {
+  bool send(QueueItem& queueItem) {
     bool result = false;
     int httpResponseCode;
 
     http.begin(url);
-    http.addHeader("Content-Type", "application/x-www-form-urlencoded");
-
-    httpResponseCode = http.POST(payload);
+    //http.addHeader("Content-Type", "application/x-www-form-urlencoded");
+    httpResponseCode = http.POST(queueItem.toJson());
 
     if (httpResponseCode > 0) {
       String response = http.getString();
@@ -74,9 +122,9 @@ public:
 
   void flush() {
     if (!queue.empty()) {
-      String payload = queue.front();
+      QueueItem queueItem = queue.front();
 
-      if (send(payload)) {
+      if (send(queueItem)) {
         queue.erase(queue.begin());
       }
     }
@@ -84,8 +132,30 @@ public:
 
   template<typename T>
   void println(const T& value) {
-    queue.push_back(String(value));
-    //Serial.println(std::to_string(value).c_str());
+    queue.push_back(QueueItem(String(value), "println"));
+  }
+
+  template<typename T>
+  void print(const T& value) {
+    queue.push_back(QueueItem(String(value), "print"));
+  }
+
+  template<typename T>
+  void cprintln(const T& value) {
+    queue.push_back(QueueItem(String(value), "cprintln"));
+  }
+
+  template<typename T>
+  void cprint(const T& value) {
+    queue.push_back(QueueItem(String(value), "cprint"));
+  }
+
+  void clear() {
+    queue.push_back(QueueItem("", "clear"));
+  }
+
+  void shell(String command) {
+    queue.push_back(QueueItem(command, "shell"));
   }
 };
 

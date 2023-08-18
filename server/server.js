@@ -1,99 +1,104 @@
 const http = require('http');
 const url = require('url');
-const util = require('util');
-const { exec } = require('child_process');
-const pexec = util.promisify(exec);
+const utils = require('./Utils.js');
 
 const port = 10000;
-const pathWifiPrint = '/wifiprint'; // This may be used as a baseline password for bad actors (insecure)
+const endpoint = '/remoteserial'; // This may be used as a baseline password for bad actors (insecure)
 const enableShellCommands = false; // This will allow your remote device to run commands on this machine (insecure, LAN only, do not use this on portforwarded WAN devices without additional security)
 
-async function handlePayload(payload) {
-  let response = '';
-  
-  if (payload === '[clear]') {
-    //console.clear();
-    clearConsole();
-  } else if (payload.startsWith('[shell=') && payload.endsWith(']')) {
+//'[#13F700]Hi[#F74B00]Test[#]Normal'
+
+// Handle functions from the device library
+const handlers = {
+  println(data) {
+    console.log( utils.color.textToCommandLineColor(data.payload) );
+  },
+  print(data) {
+    process.stdout.write(data.payload);
+  },
+  cprintln(data) {
+    console.log( utils.color.processMessageColors(data.payload) );
+  },
+  cprint(data) {
+    process.stdout.write( utils.color.processMessageColors(data.payload) );
+  },
+	clear(data) {
+    utils.console.clearFull();
+  },
+	async shell(data) {
+    let response = '{}';
+    
     if (!enableShellCommands) {
-      response = `{"error": "Shell commands disabled, blocked '${payload}'.`;
-    } else {
-      const index = payload.indexOf('=');
+      console.log(`Remote shell: '${data.payload}'`);
       
-      if (index !== -1) { // Found
-        let command = payload.substring(index).slice(1, -1);
+      try {
+        const { stdout, stderr } = utils.shell.pexec(data.payload);
+        response = `{"result": ${JSON.stringify(stdout)}}`;
+      } catch(e) {
+        console.log(e);
         
-        console.log(`Remote shell: '${command}'`);
-        
-        try {
-          const { stdout } = await pexec(command);
-          response = `{"result": ${JSON.stringify(stdout)}}`;
-        } catch (error) {
-          response = `{"error": "Executing command: ${error}"}`;
-        }
+        response = `{"error": "${e}"}`;
       }
     }
-  }
-  
-  console.log(payload);
-  console.log(response);
-  
-  return response;
-}
-
-function clearConsole() {
-  // Check the operating system and execute the appropriate shell command
-  const command = 'clear';
-
-  // Execute the shell command
-  exec(command, (error, stdout, stderr) => {
-    if (error) {
-      console.error(`Error executing command: ${error}`);
-      return;
-    }
-    console.log(stdout);
-  });
-}
-
-const server = http.createServer(async (req, res) => {
-  const parsedUrl = url.parse(req.url, true);
-
-  if (req.method === 'GET' && parsedUrl.pathname === pathWifiPrint) {
-    const payload = parsedUrl.query.payload || '';
     
-    if (payload) {
-      const response = await handlePayload(payload);
-      
-      res.writeHead(200, { 'Content-Type': 'text/plain' });
-      res.end(response);
-    } else {
-      res.writeHead(400, { 'Content-Type': 'text/plain' });
-      res.end('{"error": "Missing ?payload=value"}');
-    }
-  } else if (req.method === 'POST' && req.url === pathWifiPrint) {
-    let payload = '';
+    console.log(response);
+    
+    return response;
+  }
+};
+
+// Identify the handler and call with the payload
+async function handleRequest(data) {
+  if (data.handler in handlers) {
+    return (await handlers[data.handler](data)) || '{"success": true}';
+  } else {
+    throw new Error(`Unknown handler: ${data.handler}`);
+  }
+}
+
+// Start listen server for message events
+const server = http.createServer(async (req, res) => {
+  
+  if (req.method === 'POST' && req.url === endpoint) {
+    // Post request
+    let message = '';
     
     req.on('data', (chunk) => {
-      payload += chunk;
+      message += chunk;
     });
 
     req.on('end', async () => {
-      if (payload) {
-        const response = await handlePayload(payload);
+      try {
+        // Process message
+        if (message) {
+          const data = JSON.parse(message);
+
+          if (data.payload === undefined) {
+            throw new Error('Missing payload attribute');
+          }
+
+          const response = await handleRequest(data); // Give the data to the correct function
+          
+          res.writeHead(200, { 'Content-Type': 'text/plain' });
+          res.end(response);
+        } else {
+          res.writeHead(400, { 'Content-Type': 'text/plain' });
+          res.end('{"error": "Missing data"}');
+        }
+      } catch(e) {
+        console.log(e);
         
-        res.writeHead(200, { 'Content-Type': 'text/plain' });
-        res.end(response);
-      } else {
         res.writeHead(400, { 'Content-Type': 'text/plain' });
-        res.end('{"error": "Missing payload attribute in POST body"}');
+        res.end(`{"error": "${e}"}`);
       }
     });
   } else {
     res.writeHead(404, { 'Content-Type': 'text/plain' });
     res.end('{"error": "Route not found"}');
   }
+  
 });
 
 server.listen(port, () => {
-  console.log(`Server is listening on http://localhost:${port}${pathWifiPrint}`);
+  console.log(`Server is listening: http://${utils.network.getLocalIpAddressV4()}:${port}${endpoint}`);
 });
