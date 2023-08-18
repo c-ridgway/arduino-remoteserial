@@ -57,5 +57,5 @@ void  loop() {
   RemoteSerial.tick();
 }
 ```
-![image](https://github.com/c-ridgway/arduino-remoteserial/assets/74696795/928af67f-1904-4b0f-9a9e-4839513955fd)
+![image](https://github.com/c-ridgway/arduino-remoteserial/assets/74696795/ddd039b9-4081-438b-b8fd-50e08adae6d2)
 
