@@ -13,7 +13,7 @@ This library allows you to receive messages through a network into a console win
 
 ## Example Code
 
-Find your PC's IPv4 address, start -> cmd -> ipconfig /all
+Find your PC's IPv4 address, start -> cmd -> `ipconfig /all`
 ![image](https://github.com/c-ridgway/arduino-remoteserial/assets/74696795/e4898085-45cf-4ad6-a854-5082ca249659)
 
 
