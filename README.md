@@ -34,7 +34,7 @@ This library allows you to receive messages through a network into a console win
 
 Insert **your ip address** in to match your server machine, as seen in the above image.
 
-I expect you to already be connecting via WIFI.
+I assume you will already be connecting via WIFI. This is the only requirement.
 
 ```
 // Add to your header section
