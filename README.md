@@ -27,7 +27,7 @@ This library allows you to receive messages through a network into a console win
 
 ## 3. Setup Code
 
-Ensure you change the ip address to match your server machine, as seen in the above image.
+Insert **your ip address** in to match your server machine, as seen in the above image.
 
 ```
 // Add to your header section
