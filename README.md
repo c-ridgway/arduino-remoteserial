@@ -2,7 +2,16 @@
 
 This library allows you to receive messages through a network into a console window.
 
-## Example Serial Console
+## 1. Install Instructions
+
+1. Go to your project folder.
+2. Open or create and open the 'lib' folder.
+3. Run the command (ensure you have git installed)
+`git clone https://github.com/c-ridgway/arduino-remoteserial.git`
+4. That's it, continue with the next steps.
+
+
+## 2. Open Serial Console
 
 1. Install node.js https://nodejs.org/en/download/current
 2. Open the library directory: `lib/arduino-remoteserial/server`
@@ -11,7 +20,7 @@ This library allows you to receive messages through a network into a console win
 ![image](https://github.com/c-ridgway/arduino-remoteserial/assets/74696795/72ccb0ce-c4ac-409d-9048-891863e73480)
 
 
-## Example Code
+## 3. Setup Code
 
 Find your PC's IPv4 address, start -> cmd -> `ipconfig /all`
 ![image](https://github.com/c-ridgway/arduino-remoteserial/assets/74696795/e4898085-45cf-4ad6-a854-5082ca249659)
