@@ -36,15 +36,16 @@ Insert **your ip address** in to match your server machine, as seen in the above
 void  setup() {
   // Url (your ip address), flush interval, flush failure retry
   RemoteSerial.begin("http://192.168.1.108:10000/remoteserial", 100, 1000);
+
+  RemoteSerial.clear(); // Completely clear the console
+  RemoteSerial.println(clock()); // Send current time on its own line, it'll be sent once the wifi has connected
+  RemoteSerial.cprintln("[#13F700]Colour [#F74B00]your text. [#] Or keep it normal."); // Send coloured output, on its own line
+  //RemoteSerial.shell("ls"); // Run shell command, must be enabled in server code
 }
 
 void  loop() {
   if (clock() % 1000 == 0) // Once a second
-    RemoteSerial.clear(); // Completely clear the console
-    RemoteSerial.println(clock()); // Send current time on its own line
-    RemoteSerial.cprintln("[#13F700]Colour [#F74B00]your text. [#] Or keep it normal."); // Send coloured output, on its own line
-    RemoteSerial.print(clock()); // Print without a new line
-    //RemoteSerial.shell("ls"); // Run shell command, must be enabled in server code
+    RemoteSerial.print(clock()); // Print without a new line, once a second
 
   RemoteSerial.tick();
 }
