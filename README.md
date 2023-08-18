@@ -40,8 +40,10 @@ void  setup() {
 
 void  loop() {
   if (clock() % 1000 == 0) // Once a second
-    RemoteSerial.println(clock()); // Send current time
-    RemoteSerial.cprintln("[#13F700]Colour [#F74B00]your text. [#] Or keep it normal."); // Send coloured output
+    RemoteSerial.clear(); // Completely clear the console
+    RemoteSerial.println(clock()); // Send current time on its own line
+    RemoteSerial.cprintln("[#13F700]Colour [#F74B00]your text. [#] Or keep it normal."); // Send coloured output, on its own line
+    RemoteSerial.print(clock()); // Print without a new line
     //RemoteSerial.shell("ls"); // Run shell command, must be enabled in server code
 
   RemoteSerial.tick();
