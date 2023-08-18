@@ -1,0 +1,26 @@
+{
+  "name": "RemoteSerial",
+  "version": "1.0.0",
+  "description": "",
+  "keywords": [
+    "Serial.println",
+    "Serial.print",
+    "wifi print",
+    "wireless print",
+    "remote print"
+  ],
+  "repository":
+  {
+    "type": "git",
+    "url": "https://github.com/c-ridgway/arduino-remoteserial.git"
+  },
+  "authors":
+  {
+    "name": "c-ridgway",
+    "maintainer": true
+  },
+  "license": "MIT",
+  "frameworks": "*",
+  "platforms": "*",
+  "examples": ""
+}
