@@ -34,7 +34,7 @@ Insert **your ip address** in to match your server machine, as seen in the above
 #include  <RemoteSerial.h>
 
 void  setup() {
-  // Url (your ip address), flush interval, flush failure retry
+  // Url (your ip address), flush interval, flush failure retry delay
   RemoteSerial.begin("http://192.168.1.108:10000/remoteserial", 100, 1000);
 
   RemoteSerial.clear(); // Completely clear the console
