@@ -2,6 +2,10 @@
 
 This library allows you to receive messages through a network into a console window.
 
+## Todo
+
+- Make HTTP requests async/non-blocking.
+
 ## 1. Install Instructions
 
 1. Go to your project folder.
@@ -17,14 +21,13 @@ This library allows you to receive messages through a network into a console win
 2. Open the library directory: `lib/arduino-remoteserial/server`
 3. Open `start_nodejs_server`
 
-![image](https://github.com/c-ridgway/arduino-remoteserial/assets/74696795/72ccb0ce-c4ac-409d-9048-891863e73480)
+![image](https://github.com/c-ridgway/arduino-remoteserial/assets/74696795/d82ce0a8-bd5d-4280-9229-79c76cd39f2d)
+
 
 
 ## 3. Setup Code
 
-Find your PC's IPv4 address, start -> cmd -> `ipconfig /all`
-![image](https://github.com/c-ridgway/arduino-remoteserial/assets/74696795/e4898085-45cf-4ad6-a854-5082ca249659)
-
+Ensure you change the ip address to match your server machine, as seen in the above image.
 
 ```
 // Add to your header section
@@ -32,7 +35,7 @@ Find your PC's IPv4 address, start -> cmd -> `ipconfig /all`
 
 void  setup() {
   // Url (your ip address), flush interval, flush failure retry
-  RemoteSerial.begin("http://192.168.1.108:10000/wifiprint", 100, 1000);
+  RemoteSerial.begin("http://192.168.1.108:10000/remoteserial", 100, 1000);
 }
 
 void  loop() {
@@ -42,3 +45,5 @@ void  loop() {
   RemoteSerial.tick();
 }
 ```
+![image](https://github.com/c-ridgway/arduino-remoteserial/assets/74696795/928af67f-1904-4b0f-9a9e-4839513955fd)
+
