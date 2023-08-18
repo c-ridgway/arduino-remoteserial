@@ -30,9 +30,8 @@ Find your PC's IPv4 address, start -> cmd -> `ipconfig /all`
 // Add to your header section
 #include  <RemoteSerial.h>
 
-// Specify your PC's IPv4 addres
 void  setup() {
-  // Url, flush interval, flush failure retry
+  // Url (your ip address), flush interval, flush failure retry
   RemoteSerial.begin("http://192.168.1.108:10000/wifiprint", 100, 1000);
 }
 
