@@ -20,7 +20,7 @@ This library allows you to receive messages through a network into a console win
 `git clone https://github.com/c-ridgway/arduino-remoteserial.git`
 
 
-## 2. Open Serial Console
+## 2. Start Server
 
 1. Install node.js https://nodejs.org/en/download/current
 2. Open the library directory: `lib/arduino-remoteserial/server`
@@ -30,7 +30,7 @@ This library allows you to receive messages through a network into a console win
 
 
 
-## 3. Setup Code
+## 3. Example Code
 
 Insert **your ip address** in to match your server machine, as seen in the above image.
 
