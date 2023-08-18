@@ -34,6 +34,8 @@ This library allows you to receive messages through a network into a console win
 
 Insert **your ip address** in to match your server machine, as seen in the above image.
 
+I expect you to already be connecting via WIFI.
+
 ```
 // Add to your header section
 #include  <RemoteSerial.h>
