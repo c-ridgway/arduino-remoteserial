@@ -7,8 +7,8 @@ This library allows you to receive messages through a network into a console win
 1. Go to your project folder.
 2. Open or create and open the 'lib' folder.
 3. Run the command (ensure you have git installed)
+
 `git clone https://github.com/c-ridgway/arduino-remoteserial.git`
-4. That's it, continue with the next steps.
 
 
 ## 2. Open Serial Console
