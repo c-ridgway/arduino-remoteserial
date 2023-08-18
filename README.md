@@ -6,6 +6,10 @@ This library allows you to receive messages through a network into a console win
 
 - Make HTTP requests async/non-blocking.
 
+## Basics
+
+Arduino library sends HTTP message -> receiving server on your PC -> prints to console
+
 ## 1. Install Instructions
 
 1. Go to your project folder.
